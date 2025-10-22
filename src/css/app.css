@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  /* background-color: blue; */
+}
+
+.bookmark-manager-app {
+  display: flex;
+  min-height: 100vh;
+  background-color: #E8F0EF;
+  width: 220.9vh;
+}
+.main-content-area {
+  flex-grow: 1;
+  width: 100%;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+
+
+

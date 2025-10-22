@@ -1,0 +1,12 @@
+/* Variables ইম্পোর্ট */
+@import url('./variables.css');
+
+/* Global Styles */
+@import url('./app.css');
+
+/* Component Styles */
+@import url('./nav.css');
+@import url('./addBookmarkModal.css');
+@import url('./sidebar.css');
+@import url('./mainSection.css');
+@import url('./bookmarkCard.css');

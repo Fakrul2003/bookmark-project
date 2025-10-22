@@ -1,0 +1,41 @@
+.main-section {
+  flex-grow: 1;
+  padding: 30px;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sort-btn {
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sort-btn svg {
+  margin-right: 5px;
+}
+
+.bookmark-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+
+
+
+
+@media (max-width: 768px) {
+
+}

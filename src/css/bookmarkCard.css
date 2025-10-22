@@ -1,0 +1,83 @@
+.bookmark-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.card-title-group {
+  display: flex;
+  align-items: flex-start;
+}
+
+.site-icon {
+  margin-top: 5px;
+  margin-right: 10px;
+  color: #e33a3a;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e62020;
+}
+
+.card-url {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--primary-color);
+}
+
+.card-description {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.tag-badge {
+  display: inline-block;
+  background-color: #e8f5e9;
+  color: var(--primary-color);
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.card-info {
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #757575;
+}
+
+.card-info svg {
+  margin-right: 4px;
+}
+
+.card-bookmark-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}

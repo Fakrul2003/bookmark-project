@@ -1,0 +1,115 @@
+.menu-toggle-btn {
+  display: none; /* ডিফল্টে লুকানো */
+  background: none;
+  background-color: rgb(176, 144, 144);
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 101;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-sizing: border-box;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  font-size: 0.4rem;
+  font-weight: bold;
+}
+
+.brand-icon {
+  padding: 2px;
+  margin-right: 8px;
+  background-color: #014745;
+  color: #FFFFFF;
+  border-radius: 5px;
+}
+
+.nav-search {
+  border: 1px solid rgb(212, 209, 209);
+  display: flex;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  padding: 8px 15px;
+  width: 300px;
+}
+
+.search-icon {
+  color: black;
+}
+
+.nav-search input {
+  border: none;
+  border-radius: 5px;
+  outline: none;
+  background: none;
+  margin-left: 10px;
+  width: 100%;
+}
+
+.add-bookmark-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.user-profile {
+  border: 1px solid gray;
+  border-radius: 50%;
+  color: #555;
+  margin-left: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .menu-toggle-btn {
+    display: block; /* ছোট স্ক্রিনে (মোবাইল) দেখাবে */
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .nav-bar {
+    padding: 10px 15px; /* ছোট স্ক্রিনে প্যাডিং কমানো */
+  }
+
+  .nav-search {
+    width: 150px; /* ছোট স্ক্রিনে সার্চ বারের প্রস্থ কমানো */
+    padding: 6px 10px;
+  }
+
+  .nav-search input {
+    font-size: 0.9rem;
+  }
+
+  .add-bookmark-btn {
+    padding: 6px 12px; /* ছোট স্ক্রিনে বাটনের সাইজ কমানো */
+    font-size: 0.9rem;
+  }
+
+ 
+}
+
+@media (min-width: 769px) {
+  .menu-toggle-btn {
+    display: none; /* বড় স্ক্রিনে (ডেস্কটপ) লুকানো */
+  }
+}
