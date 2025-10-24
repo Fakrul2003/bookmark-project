@@ -1,31 +1,29 @@
 .menu-toggle-btn {
   display: none; /* ডিফল্টে লুকানো */
   background: none;
-  background-color: rgb(176, 144, 144);
+  width: 50px;
   border: none;
   cursor: pointer;
   padding: 5px;
   z-index: 101;
+  border: 1px solid black;
+  border-radius: 5px;
 }
-
+.m-nav-r{
+  display: flex;
+}
 .nav-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 30px;
-  background-color: #FFFFFF;
+  padding: 19px;
+  height: 70px;
+  background-color: #ffffff;
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 100;
   box-sizing: border-box;
-}
-
-.nav-brand {
-  display: flex;
-  align-items: center;
-  font-size: 0.4rem;
-  font-weight: bold;
 }
 
 .brand-icon {
@@ -82,18 +80,14 @@
   .menu-toggle-btn {
     display: block; /* ছোট স্ক্রিনে (মোবাইল) দেখাবে */
     position: absolute;
-    left: 5px;
+    left: 15px;
     top: 50%;
     transform: translateY(-50%);
   }
-
-  .nav-bar {
-    padding: 10px 15px; /* ছোট স্ক্রিনে প্যাডিং কমানো */
-  }
-
   .nav-search {
     width: 150px; /* ছোট স্ক্রিনে সার্চ বারের প্রস্থ কমানো */
     padding: 6px 10px;
+    margin-left: 59px;
   }
 
   .nav-search input {

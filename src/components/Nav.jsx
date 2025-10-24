@@ -18,14 +18,15 @@ function Nav({ searchTerm, setSearchTerm, onAddClick, toggleSidebar }) { // togg
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-
-      <button className="add-bookmark-btn" onClick={onAddClick}>
+     <div className="m-nav-r">
+     <button className="add-bookmark-btn" onClick={onAddClick}>
         + Add Bookmark
       </button>
 
       <div className="user-profile">
         <User size={29} />
       </div>
+     </div>
     </header>
   );
 }

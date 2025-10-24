@@ -1,7 +1,7 @@
 :root {
-  --primary-color: #2e7d32; /* সবুজ টোন */
-  --sidebar-width: 250px;
-  --bg-color: #5588bb;
-  --card-bg: #de7d7d;
-  --border-color: #6db56e;
+  --primary-color: #4C5C59; /* সবুজ টোন */
+  --sidebar-width: 270px;
+  --bg-color: #DDE9E7;
+  --card-bg: #FFFFFF;
+  --border-color: #d7dcdb;
 }

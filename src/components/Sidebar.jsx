@@ -4,13 +4,13 @@ import { Bookmark, Home, Archive, X } from 'lucide-react'; // X আইকন য
 function Sidebar({ tags, selectedTags, onTagChange, isOpen, onClose }) {
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
-      {/* Close Button (only visible on mobile when open) */}
-      {isOpen && (
+     
+             {/* Close Button (only visible on mobile when open) */}
+        {isOpen && (
         <button className="close-btn" onClick={onClose}>
           <X size={24} />
         </button>
       )}
-
       {/* Primary Navigation */}
       <nav className="sidebar-nav">
         <div className="nav-brand">

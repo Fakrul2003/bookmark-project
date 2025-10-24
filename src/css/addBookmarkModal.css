@@ -111,3 +111,38 @@
   color: white;
   border: none;
 }
+
+
+/* Responsive Design */
+@media (min-width: 769px) {
+ .modal-overlay {
+  position: fixed;
+  
+  background-color: rgba(218, 44, 44, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+  
+}
+
+@media (max-width: 768px) {
+  
+.modal-overlay {
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  right: 100px;
+  bottom: 100px;
+  background-color: rgba(231, 225, 225, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+
+
+}
