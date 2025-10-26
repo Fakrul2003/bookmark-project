@@ -107,3 +107,318 @@
     display: none; /* বড় স্ক্রিনে (ডেস্কটপ) লুকানো */
   }
 }
+
+
+
+/* ========== */
+/* থিম টগল আইটেম */
+.theme-toggle-item {
+  width: 100%;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.theme-toggle-item:hover {
+  background: #f3f4f6;
+}
+
+.dark-mode .theme-toggle-item:hover {
+  background: #374151;
+}
+
+/* লেবেল: Theme + আইকন */
+.theme-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.dark-mode .theme-label {
+  color: #d1d5db;
+}
+
+.theme-label span {
+  font-weight: 500;
+}
+
+/* সুইচ */
+.theme-switch {
+  position: relative;
+  width: 56px;
+  height: 32px;
+  background: #e5e7eb;
+  border-radius: 50px;
+  transition: background 0.3s ease;
+}
+
+.theme-switch.dark {
+  background: #374151;
+}
+
+.theme-switch .icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: opacity 0.2s ease, transform 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.theme-switch .sun {
+  left: 8px;
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.theme-switch .moon {
+  right: 8px;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.8);
+}
+
+.theme-switch.dark .sun {
+  opacity: 0;
+  transform: translateY(-50%) scale(0.8);
+}
+
+.theme-switch.dark .moon {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.theme-switch .slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.theme-switch.dark .slider {
+  transform: translateX(24px);
+  background: #1f2937;
+}
+
+
+/* প্রোফাইল ড্রপডাউন */
+.user-profile-container {
+  position: relative;
+}
+
+.user-profile-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.user-profile-btn:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  width: 260px;
+  z-index: 1000;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.profile-header {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.profile-header h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.profile-header p {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.profile-menu {
+  padding: 8px 0;
+}
+
+.theme-toggle-btn,
+.logout-btn {
+  width: 100%;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.theme-toggle-btn:hover,
+.logout-btn:hover {
+  background: #f3f4f6;
+}
+
+.logout-btn {
+  color: #dc2626;
+}
+
+/* ডার্ক মোড */
+.dark-mode {
+  background: #111827;
+  color: #f3f4f6;
+}
+
+.dark-mode .nav-bar,
+.dark-mode .sidebar,
+.dark-mode .main-section,
+.dark-mode .bookmark-card,
+.dark-mode .confirm-modal,
+.dark-mode .profile-dropdown {
+  background: #1f2937;
+  color: #f3f4f6;
+}
+
+.dark-mode .nav-search input,
+.dark-mode .bookmark-card .card-url,
+.dark-mode .tag-badge {
+  background: #374151;
+  color: #e5e7eb;
+  border-color: #4b5563;
+}
+
+.dark-mode .add-bookmark-btn {
+  background: #10b981;
+}
+
+.dark-mode .add-bookmark-btn:hover {
+  background: #059669;
+}
+
+.dark-mode .profile-header {
+  border-bottom: 1px solid #374151;
+}
+
+.dark-mode .theme-toggle-btn:hover,
+.dark-mode .logout-btn:hover {
+  background: #374151;
+}
+
+
+
+/* থিম টগল সুইচ */
+.theme-toggle-switch {
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 56px;
+  height: 32px;
+  background: #e5e7eb;
+  border-radius: 50px;
+  transition: background 0.3s ease;
+}
+
+.switch.dark {
+  background: #374151;
+}
+
+.switch .icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: opacity 0.2s ease, transform 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.switch .sun {
+  left: 8px;
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.switch .moon {
+  right: 8px;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.8);
+}
+
+.switch.dark .sun {
+  opacity: 0;
+  transform: translateY(-50%) scale(0.8);
+}
+
+.switch.dark .moon {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.switch .slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.switch.dark .slider {
+  transform: translateX(24px);
+  background: #1f2937;
+}
+
+/* হোভার ইফেক্ট */
+.theme-toggle-switch:hover .switch {
+  background: #d1d5db;
+}
+
+.theme-toggle-switch:hover .switch.dark {
+  background: #4b5563;
+}

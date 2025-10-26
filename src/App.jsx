@@ -1,10 +1,18 @@
+// src/App.jsx
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+
 import Nav from './components/Nav';
 import Sidebar from './components/Sidebar';
 import MainSection from './components/MainSection';
+import AddBookmarkModal from './components/AddBookmarkModal';
+import EditBookmarkModal from './components/EditBookmarkModal';
+
 import './App.css';
 import './css/main.css';
-import AddBookmarkModal from './components/AddBookmarkModal';
+
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 const initialBookmarks = [
   {
@@ -13,7 +21,9 @@ const initialBookmarks = [
     url: 'frontendmentor.io',
     description: 'Improve your front-end coding skills by building real projects.',
     tags: ['Design', 'Practice', 'Learning'],
-    bookmarked: true,
+    pinned: false,
+    archived: false,
+    addTime: Date.now() - 300000,
   },
   {
     id: 2,
@@ -21,7 +31,9 @@ const initialBookmarks = [
     url: 'developer.mozilla.org',
     description: 'The MDN Web Docs site provides information about Open Web technologies.',
     tags: ['HTML', 'CSS', 'Reference'],
-    bookmarked: true,
+    pinned: false,
+    archived: false,
+    addTime: Date.now() - 200000,
   },
   {
     id: 3,
@@ -29,7 +41,9 @@ const initialBookmarks = [
     url: 'css-tricks.com',
     description: 'A blog about CSS and web design.',
     tags: ['Design', 'CSS'],
-    bookmarked: true,
+    pinned: false,
+    archived: false,
+    addTime: Date.now() - 100000,
   },
 ];
 
@@ -45,59 +59,35 @@ const initialTags = [
   { name: 'Reference', count: 4 },
 ];
 
-function App() {
-  const [bookmarks, setBookmarks] = React.useState(initialBookmarks);
-  const [selectedTags, setSelectedTags] = React.useState([]);
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [tags, setTags] = useState(initialTags);
-
-  const handleTagChange = (tagName) => {
-    setSelectedTags((prevTags) =>
-      prevTags.includes(tagName)
-        ? prevTags.filter((tag) => tag !== tagName)
-        : [...prevTags, tagName]
-    );
-  };
-
-  const filteredBookmarks = bookmarks.filter((bookmark) => {
-    const matchesSearch = bookmark.title.toLowerCase().includes(searchTerm.toLowerCase());
-    // OR লজিক: যেকোনো একটি ট্যাগ মিললে দেখাবে
-    const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => bookmark.tags.includes(tag));
-    return matchesSearch && matchesTags;
-  });
-
-  const handleAddBookmark = (newBookmark) => {
-    const newTagsFromBookmark = newBookmark.tags.filter(tag => !tags.some(t => t.name === tag));
-    if (newTagsFromBookmark.length > 0) {
-      setTags(prevTags => [
-        ...prevTags,
-        ...newTagsFromBookmark.map(tag => ({ name: tag, count: prevTags.find(t => t.name === tag)?.count + 1 || 1 })),
-      ]);
-    }
-    setBookmarks([newBookmark, ...bookmarks]);
-  };
-
-  const updateTags = (newTagsInput) => {
-    const tagsArray = newTagsInput.split(',').map(tag => tag.trim()).filter(tag => tag);
-    const uniqueNewTags = tagsArray.filter(tag => !tags.some(t => t.name === tag));
-    if (uniqueNewTags.length > 0) {
-      setTags(prevTags => [
-        ...prevTags,
-        ...uniqueNewTags.map(tag => ({ name: tag, count: 1 })),
-      ]);
-    }
-  };
-
+// ✅ আলাদা Layout Component তৈরি করা হয়েছে
+function MainLayout({ 
+  bookmarks, sortedBookmarks, selectedTags, setSelectedTags, 
+  tags, setTags, viewMode, setViewMode,
+  searchTerm, setSearchTerm, 
+  isModalOpen, setIsModalOpen, 
+  isSidebarOpen, setIsSidebarOpen, 
+  isDarkMode, toggleTheme, 
+  onAddBookmark, onEdit, onPin, onArchive, onUnarchive, onDelete,
+  isLoggedIn, setIsLoggedIn, 
+  editingBookmark, setEditingBookmark, isEditModalOpen, setIsEditModalOpen,
+  confirmAction, setConfirmAction, confirmActionHandler
+}) {
   return (
-    <div className="bookmark-manager-app">
-      <Sidebar 
+    <>
+      <Sidebar
         tags={tags}
         selectedTags={selectedTags}
-        onTagChange={handleTagChange}
+        onTagChange={(tagName) =>
+          setSelectedTags(prev =>
+            prev.includes(tagName)
+              ? prev.filter(t => t !== tagName)
+              : [...prev, tagName]
+          )
+        }
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
       />
 
       <div className="main-content-area">
@@ -106,17 +96,197 @@ function App() {
           setSearchTerm={setSearchTerm}
           onAddClick={() => setIsModalOpen(true)}
           toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          isDarkMode={isDarkMode}
+          toggleTheme={toggleTheme}
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
         />
-        <MainSection bookmarks={filteredBookmarks} />
+
+        <MainSection
+          bookmarks={sortedBookmarks}
+          onEdit={onEdit}
+          onPin={onPin}
+          onArchive={onArchive}
+          onUnarchive={onUnarchive}
+          onDelete={onDelete}
+          viewMode={viewMode}
+        />
       </div>
+
+      {/* Modals */}
       <AddBookmarkModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onAddBookmark={handleAddBookmark}
+        onAddBookmark={onAddBookmark}
         tags={tags}
-        updateTags={updateTags}
       />
+
+      <EditBookmarkModal
+        isOpen={isEditModalOpen}
+        onClose={() => { setIsEditModalOpen(false); setEditingBookmark(null); }}
+        bookmark={editingBookmark}
+        onSave={(updatedBookmark) => {
+          setEditingBookmark(null);
+          setIsEditModalOpen(false);
+        }}
+      />
+
+      {/* Confirm Modal */}
+      {confirmAction && (
+        <div className="modal-overlay" onClick={() => setConfirmAction(null)}>
+          <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>
+                {confirmAction.type === 'delete' ? 'Delete' : 
+                 confirmAction.type === 'archive' ? 'Archive' : 'Unarchive'} bookmark
+              </h3>
+              <button onClick={() => setConfirmAction(null)} className="modal-close-btn">
+                X
+              </button>
+            </div>
+            <p>
+              {confirmAction.type === 'delete' 
+                ? 'This action cannot be undone. Are you sure you want to permanently delete this bookmark?'
+                : `Are you sure you want to ${confirmAction.type === 'archive' ? 'archive' : 'unarchive'} this bookmark?`
+              }
+            </p>
+            <div className="modal-actions">
+              <button onClick={() => setConfirmAction(null)} className="cancel-btn">Cancel</button>
+              <button 
+                onClick={confirmActionHandler} 
+                className={confirmAction.type === 'delete' ? 'delete-confirm-btn' : 'archive-confirm-btn'}
+              >
+                {confirmAction.type === 'delete' ? 'Delete' : 
+                 confirmAction.type === 'archive' ? 'Archive' : 'Unarchive'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function AppContent() {
+  const location = useLocation(); // ✅ useLocation ব্যবহার করে বর্তমান path জানা যাবে
+  const [bookmarks, setBookmarks] = useState(initialBookmarks);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [tags, setTags] = useState(initialTags);
+  const [editingBookmark, setEditingBookmark] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState('all');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // থিম টগল
+  const toggleTheme = () => setIsDarkMode(prev => !prev);
+
+  // ফিল্টার + সর্টিং
+  const filteredBookmarks = bookmarks.filter((bookmark) => {
+    const matchesSearch = bookmark.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => bookmark.tags.includes(tag));
+    const matchesView = 
+      viewMode === 'all' ? !bookmark.archived : 
+      viewMode === 'archived' ? bookmark.archived : true;
+    return matchesSearch && matchesTags && matchesView;
+  });
+
+  const sortedBookmarks = [...filteredBookmarks].sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+    return a.addTime - b.addTime;
+  });
+
+  // ফাংশনগুলো
+  const handleAddBookmark = (newBookmark) => {
+    const bookmarkWithTime = { ...newBookmark, pinned: false, archived: false, addTime: Date.now() };
+    setBookmarks(prev => [...prev, bookmarkWithTime]);
+  };
+
+  const handleEdit = (bookmark) => {
+    setEditingBookmark(bookmark);
+    setIsEditModalOpen(true);
+  };
+
+  const handlePin = (id) => {
+    setBookmarks(prev =>
+      prev.map(b => b.id === id ? { ...b, pinned: !b.pinned } : b)
+    );
+  };
+
+  const handleArchive = (id) => setConfirmAction({ type: 'archive', id });
+  const handleUnarchive = (id) => setConfirmAction({ type: 'unarchive', id });
+  const handleDelete = (id) => setConfirmAction({ type: 'delete', id });
+
+  const confirmActionHandler = () => {
+    if (!confirmAction) return;
+    if (confirmAction.type === 'archive')
+      setBookmarks(prev => prev.map(b => b.id === confirmAction.id ? { ...b, archived: true } : b));
+    else if (confirmAction.type === 'unarchive')
+      setBookmarks(prev => prev.map(b => b.id === confirmAction.id ? { ...b, archived: false } : b));
+    else if (confirmAction.type === 'delete')
+      setBookmarks(prev => prev.filter(b => b.id !== confirmAction.id));
+    setConfirmAction(null);
+  };
+
+  // ✅ Sidebar + Nav শুধু তখনই দেখাবে, যদি path '/login' বা '/signup' না হয়
+  const hideLayout = location.pathname === '/login' || location.pathname === '/signup';
+
+  return (
+    <div className={`bookmark-manager-app ${isDarkMode ? 'dark-mode' : ''}`}>
+      {!hideLayout ? (
+        <MainLayout
+          bookmarks={bookmarks}
+          sortedBookmarks={sortedBookmarks}
+          selectedTags={selectedTags}
+          setSelectedTags={setSelectedTags}
+          tags={tags}
+          setTags={setTags}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isDarkMode={isDarkMode}
+          toggleTheme={toggleTheme}
+          onAddBookmark={handleAddBookmark}
+          onEdit={handleEdit}
+          onPin={handlePin}
+          onArchive={handleArchive}
+          onUnarchive={handleUnarchive}
+          onDelete={handleDelete}
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
+          editingBookmark={editingBookmark}
+          setEditingBookmark={setEditingBookmark}
+          isEditModalOpen={isEditModalOpen}
+          setIsEditModalOpen={setIsEditModalOpen}
+          confirmAction={confirmAction}
+          setConfirmAction={setConfirmAction}
+          confirmActionHandler={confirmActionHandler}
+        />
+      ) : (
+        <Routes>
+          <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} />} />
+        </Routes>
+      )}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 

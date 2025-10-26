@@ -39,3 +39,100 @@
 @media (max-width: 768px) {
 
 }
+
+
+/* ======sort style========= */
+/* সর্ট কন্টেইনার */
+.sort-container {
+  position: relative;
+}
+
+.sort-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sort-btn:hover {
+  border-color: #10b981;
+  background: #f9fafb;
+}
+
+.dark-mode .sort-btn {
+  background: #1f2937;
+  border-color: #374151;
+  color: #d1d5db;
+}
+
+.dark-mode .sort-btn:hover {
+  background: #374151;
+  border-color: #10b981;
+}
+
+/* ড্রপডাউন */
+.sort-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  min-width: 180px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.dark-mode .sort-dropdown {
+  background: #1f2937;
+  border-color: #374151;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.sort-option {
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.875rem;
+  color: #374151;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sort-option:hover {
+  background: #f3f4f6;
+}
+
+.sort-option.active {
+  background: #ecfdf5;
+  color: #059669;
+  font-weight: 500;
+}
+
+.dark-mode .sort-option {
+  color: #d1d5db;
+}
+
+.dark-mode .sort-option:hover {
+  background: #374151;
+}
+
+.dark-mode .sort-option.active {
+  background: #064e3b;
+  color: #6ee7b7;
+}

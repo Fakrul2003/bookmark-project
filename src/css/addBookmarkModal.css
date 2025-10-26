@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(231, 225, 225, 0.5);
+  background-color: rgba(43, 40, 40, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -67,7 +67,7 @@
 .form-group textarea {
   width: 100%;
   padding: 10px;
-  border: 1px solid #d81313;
+  border: 1px solid #9e9a9a;
   background-color: #ccc;
   border-radius: 6px;
   box-sizing: border-box;
@@ -118,7 +118,7 @@
  .modal-overlay {
   position: fixed;
   
-  background-color: rgba(218, 44, 44, 0.5);
+  background-color: rgba(0, 0, 0, 0.807);
   display: flex;
   justify-content: center;
   align-items: center;
