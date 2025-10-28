@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 import Nav from './components/Nav';
@@ -59,7 +59,7 @@ const initialTags = [
   { name: 'Reference', count: 4 },
 ];
 
-// ✅ আলাদা Layout Component তৈরি করা হয়েছে
+// Main Layout
 function MainLayout({ 
   bookmarks, sortedBookmarks, selectedTags, setSelectedTags, 
   tags, setTags, viewMode, setViewMode,
@@ -70,7 +70,8 @@ function MainLayout({
   onAddBookmark, onEdit, onPin, onArchive, onUnarchive, onDelete,
   isLoggedIn, setIsLoggedIn, 
   editingBookmark, setEditingBookmark, isEditModalOpen, setIsEditModalOpen,
-  confirmAction, setConfirmAction, confirmActionHandler
+  confirmAction, setConfirmAction, confirmActionHandler,
+  currentUser, setCurrentUser, onLogout
 }) {
   return (
     <>
@@ -100,6 +101,9 @@ function MainLayout({
           toggleTheme={toggleTheme}
           isLoggedIn={isLoggedIn}
           setIsLoggedIn={setIsLoggedIn}
+          currentUser={currentUser}
+          setCurrentUser={setCurrentUser}
+          onLogout={onLogout}
         />
 
         <MainSection
@@ -126,8 +130,9 @@ function MainLayout({
         onClose={() => { setIsEditModalOpen(false); setEditingBookmark(null); }}
         bookmark={editingBookmark}
         onSave={(updatedBookmark) => {
-          setEditingBookmark(null);
+          setBookmarks(prev => prev.map(b => b.id === updatedBookmark.id ? updatedBookmark : b));
           setIsEditModalOpen(false);
+          setEditingBookmark(null);
         }}
       />
 
@@ -140,9 +145,7 @@ function MainLayout({
                 {confirmAction.type === 'delete' ? 'Delete' : 
                  confirmAction.type === 'archive' ? 'Archive' : 'Unarchive'} bookmark
               </h3>
-              <button onClick={() => setConfirmAction(null)} className="modal-close-btn">
-                X
-              </button>
+              <button onClick={() => setConfirmAction(null)} className="modal-close-btn">X</button>
             </div>
             <p>
               {confirmAction.type === 'delete' 
@@ -168,7 +171,8 @@ function MainLayout({
 }
 
 function AppContent() {
-  const location = useLocation(); // ✅ useLocation ব্যবহার করে বর্তমান path জানা যাবে
+  const location = useLocation();
+
   const [bookmarks, setBookmarks] = useState(initialBookmarks);
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -179,13 +183,23 @@ function AppContent() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState('all');
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [confirmAction, setConfirmAction] = useState(null); 
+  const [confirmAction, setConfirmAction] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null); // যোগ করা হয়েছে
 
-  // থিম টগল
+  // রিফ্রেশে ইউজার লোড
+  useEffect(() => {
+    const user = localStorage.getItem('currentUser');
+    console.log('App.jsx: currentUser loaded:', user ? JSON.parse(user) : null);
+    if (user) {
+      const parsed = JSON.parse(user);
+      setCurrentUser(parsed);
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   const toggleTheme = () => setIsDarkMode(prev => !prev);
 
-  // ফিল্টার + সর্টিং
   const filteredBookmarks = bookmarks.filter((bookmark) => {
     const matchesSearch = bookmark.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => bookmark.tags.includes(tag));
@@ -201,7 +215,6 @@ function AppContent() {
     return a.addTime - b.addTime;
   });
 
-  // ফাংশনগুলো
   const handleAddBookmark = (newBookmark) => {
     const bookmarkWithTime = { ...newBookmark, pinned: false, archived: false, addTime: Date.now() };
     setBookmarks(prev => [...prev, bookmarkWithTime]);
@@ -233,7 +246,12 @@ function AppContent() {
     setConfirmAction(null);
   };
 
-  // ✅ Sidebar + Nav শুধু তখনই দেখাবে, যদি path '/login' বা '/signup' না হয়
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    setCurrentUser(null);
+    setIsLoggedIn(false);
+  };
+
   const hideLayout = location.pathname === '/login' || location.pathname === '/signup';
 
   return (
@@ -271,11 +289,14 @@ function AppContent() {
           confirmAction={confirmAction}
           setConfirmAction={setConfirmAction}
           confirmActionHandler={confirmActionHandler}
+          currentUser={currentUser}
+          setCurrentUser={setCurrentUser}
+          onLogout={handleLogout}
         />
       ) : (
         <Routes>
-          <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-          <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setCurrentUser={setCurrentUser} />} />
+          <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} setCurrentUser={setCurrentUser} />} />
         </Routes>
       )}
     </div>

@@ -1,25 +1,22 @@
 // src/components/Nav.jsx
-import React, { useState, useEffect, useRef } from 'react';
-import { Search, User, Menu, Sun, Moon, Monitor } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Search, User, Menu, Sun, Moon, Monitor, LogIn, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 function Nav({ 
-  searchTerm, 
-  setSearchTerm, 
-  onAddClick, 
-  toggleSidebar,
-  isDarkMode,
-  toggleTheme,
-  isLoggedIn,
-  setIsLoggedIn
+  searchTerm, setSearchTerm, 
+  onAddClick, toggleSidebar, 
+  isDarkMode, toggleTheme, 
+  isLoggedIn, setIsLoggedIn,
+  currentUser, setCurrentUser, onLogout 
 }) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
         setIsProfileOpen(false);
       }
     };
@@ -27,21 +24,17 @@ function Nav({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const handleAuth = (path) => {
     setIsProfileOpen(false);
-    navigate('/login');
+    navigate(path);
   };
-
-  const handleLogin = () => navigate('/login');
-  const handleSignup = () => navigate('/signup');
 
   return (
     <header className="nav-bar">
       <button className="menu-toggle-btn" onClick={toggleSidebar}>
         <Menu size={24} />
       </button>
-      
+
       <div className="nav-search">
         <Search size={20} className="search-icon" />
         <input
@@ -57,29 +50,51 @@ function Nav({
           + Add Bookmark
         </button>
 
-        {/* প্রোফাইল + থিম টগল */}
         <div className="user-profile-container" ref={profileRef}>
           <button 
             className="user-profile-btn" 
             onClick={() => setIsProfileOpen(!isProfileOpen)}
           >
-            <User size={29} />
+            {currentUser ? (
+              <img 
+                src={currentUser.profileImage} 
+                alt={currentUser.name || 'User'}
+                className="profile-avatar-img"
+                onError={(e) => {
+                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || 'User')}&background=0d9488&color=fff&size=100`;
+                }}
+              />
+            ) : (
+              <User size={29} />
+            )}
           </button>
 
           {isProfileOpen && (
             <div className="profile-dropdown">
               <div className="profile-header">
                 <div className="profile-avatar">
-                  <User size={40} />
+                  {currentUser?.profileImage ? (
+                    <img src={currentUser.profileImage} alt={currentUser.name} />
+                  ) : (
+                    <User size={40} />
+                  )}
                 </div>
                 <div>
-                  <h4>{isLoggedIn ? 'Emily Carter' : 'Guest User'}</h4>
-                  <p>{isLoggedIn ? 'emily101@email.com' : 'Please login to continue'}</p>
+                  {currentUser ? (
+                    <>
+                      <h4>{currentUser.name}</h4>
+                      <p>{currentUser.email}</p>
+                    </>
+                  ) : (
+                    <>
+                      <h4>Guest User</h4>
+                      <p>Not logged in</p>
+                    </>
+                  )}
                 </div>
               </div>
 
               <div className="profile-menu">
-                {/* থিম টগল অংশ সবসময় থাকবে */}
                 <button className="theme-toggle-item" onClick={toggleTheme}>
                   <div className="theme-label">
                     <Monitor size={18} />
@@ -92,18 +107,19 @@ function Nav({
                   </div>
                 </button>
 
-                {/* লগইন অবস্থা অনুযায়ী বাটন পরিবর্তন */}
-                {isLoggedIn ? (
-                  <button className="logout-btn" onClick={handleLogout}>
+                {currentUser ? (
+                  <button className="logout-btn" onClick={onLogout}>
                     <span>Logout</span>
                   </button>
                 ) : (
                   <div className="auth-buttons">
-                    <button className="login-btn" onClick={handleLogin}>
+                    <button className="auth-btn login" onClick={() => handleAuth('/login')}>
+                      <LogIn size={16} />
                       <span>Login</span>
                     </button>
-                    <button className="signup-btn" onClick={handleSignup}>
-                      <span>Signup</span>
+                    <button className="auth-btn signup" onClick={() => handleAuth('/signup')}>
+                      <UserPlus size={16} />
+                      <span>Sign up</span>
                     </button>
                   </div>
                 )}

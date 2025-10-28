@@ -1,8 +1,8 @@
+// src/pages/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import './Auth.css';
 
-function Login({ setIsLoggedIn }) {
+function Login({ setIsLoggedIn, setCurrentUser }) {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
 
@@ -10,7 +10,8 @@ function Login({ setIsLoggedIn }) {
     e.preventDefault();
     const savedUser = JSON.parse(localStorage.getItem('user'));
     if (savedUser && savedUser.email === form.email && savedUser.password === form.password) {
-      localStorage.setItem('loggedInUser', savedUser.email);
+      localStorage.setItem('currentUser', JSON.stringify(savedUser));
+      setCurrentUser(savedUser);
       setIsLoggedIn(true);
       navigate('/');
     } else {
@@ -21,7 +22,7 @@ function Login({ setIsLoggedIn }) {
   return (
     <div className="auth-container">
       <div className="auth-box">
-        <h1 className="logo">🔖 Bookmark Manager</h1>
+        <h1 className="logo">Bookmark Manager</h1>
         <h2>Welcome back</h2>
         <p>Log in to continue saving and managing your favorite links.</p>
 

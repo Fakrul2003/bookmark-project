@@ -75,7 +75,7 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark, tags }) {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. ChatGPT"
+              placeholder=""
               required
             />
           </div>
@@ -88,7 +88,7 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark, tags }) {
               onChange={(e) => setDescription(e.target.value)}
               maxLength={400}
               rows={3}
-              placeholder="Brief description of the website..."
+              placeholder=""
               required
             />
             <small className="char-count">{description.length}/400</small>
@@ -101,7 +101,7 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark, tags }) {
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="chatgpt.com or https://chatgpt.com"
+              placeholder=""
               required
             />
           </div>
@@ -113,7 +113,7 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark, tags }) {
               type="text"
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
-              placeholder="e.g. AI, Learning, Tools"
+              placeholder=""
             />
             <small style={{ color: '#666', fontSize: '0.75rem' }}>
               Separate tags with commas

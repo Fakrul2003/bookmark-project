@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Bookmark } from 'lucide-react';
+import { getGravatarUrl } from '../utils/getGravatarUrl';
 
 function AuthPage({ onLoginSuccess }) {
   const [searchParams] = useSearchParams();
@@ -57,7 +58,7 @@ function AuthPage({ onLoginSuccess }) {
         fullName: formData.fullName,
         email: formData.email,
         password: formData.password,
-        profileImage // এটি যোগ করা হয়েছে
+        profileImage: getGravatarUrl(formData.email)
       };
       users.push(newUser);
       localStorage.setItem('users', JSON.stringify(users));

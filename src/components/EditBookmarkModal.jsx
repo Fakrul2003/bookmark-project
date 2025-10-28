@@ -91,7 +91,7 @@ function EditBookmarkModal({ isOpen, onClose, bookmark, onSave }) {
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com"
+              placeholder=""
               required
             />
           </div>
@@ -103,7 +103,7 @@ function EditBookmarkModal({ isOpen, onClose, bookmark, onSave }) {
               type="text"
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
-              placeholder="e.g. Design, Learning, Tools"
+              placeholder=""
             />
           </div>
 
