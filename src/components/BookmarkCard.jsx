@@ -109,16 +109,23 @@ function BookmarkCard({
           <Calendar size={14} /><span>{dateAdded}</span>
         </div>
 
+        {/* এখানে condition */}
         <div 
           className="pin" 
-          onClick={() => onPin(bookmark.id)}
-          style={{ cursor: 'pointer' }}
+          onClick={() => !isArchivedView && onPin(bookmark.id)}
+          style={{ cursor: isArchivedView ? 'default' : 'pointer' }}
         >
-          <Pin 
-            size={28} 
-            color={bookmark.pinned ? 'red' : 'gray'} 
-            fill={bookmark.pinned ? 'red' : 'none'} 
-          />
+          {isArchivedView ? (
+            <span className="archived-text" style={{ color: 'gray', fontWeight: '500' }}>
+              Archived
+            </span>
+          ) : (
+            <Pin 
+              size={28} 
+              color={bookmark.pinned ? 'red' : 'gray'} 
+              fill={bookmark.pinned ? 'red' : 'none'} 
+            />
+          )}
         </div>
       </div>
     </div>

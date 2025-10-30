@@ -1,46 +1,49 @@
 // src/App.jsx
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
-import Nav from './components/Nav';
-import Sidebar from './components/Sidebar';
-import MainSection from './components/MainSection';
-import AddBookmarkModal from './components/AddBookmarkModal';
-import EditBookmarkModal from './components/EditBookmarkModal';
+import Nav from "./components/Nav";
+import Sidebar from "./components/Sidebar";
+import MainSection from "./components/MainSection";
+import AddBookmarkModal from "./components/AddBookmarkModal";
+import EditBookmarkModal from "./components/EditBookmarkModal";
 
-import './App.css';
-import './css/main.css';
+import "./App.css";
+import "./css/main.css";
 
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
+// --------------------
+// Dummy Initial Data
+// --------------------
 const initialBookmarks = [
   {
     id: 1,
-    title: 'Frontend Mentor',
-    url: 'frontendmentor.io',
-    description: 'Improve your front-end coding skills by building real projects.',
-    tags: ['Design', 'Practice', 'Learning'],
+    title: "Frontend Mentor",
+    url: "frontendmentor.io",
+    description: "Improve your front-end coding skills by building real projects.",
+    tags: ["Design", "Practice", "Learning"],
     pinned: false,
     archived: false,
     addTime: Date.now() - 300000,
   },
   {
     id: 2,
-    title: 'MDN Web Docs',
-    url: 'developer.mozilla.org',
-    description: 'The MDN Web Docs site provides information about Open Web technologies.',
-    tags: ['HTML', 'CSS', 'Reference'],
+    title: "MDN Web Docs",
+    url: "developer.mozilla.org",
+    description: "The MDN Web Docs site provides information about Open Web technologies.",
+    tags: ["HTML", "CSS", "Reference"],
     pinned: false,
     archived: false,
     addTime: Date.now() - 200000,
   },
   {
     id: 3,
-    title: 'CSS Tricks',
-    url: 'css-tricks.com',
-    description: 'A blog about CSS and web design.',
-    tags: ['Design', 'CSS'],
+    title: "CSS Tricks",
+    url: "css-tricks.com",
+    description: "A blog about CSS and web design.",
+    tags: ["Design", "CSS"],
     pinned: false,
     archived: false,
     addTime: Date.now() - 100000,
@@ -48,40 +51,67 @@ const initialBookmarks = [
 ];
 
 const initialTags = [
-  { name: 'AI', count: 1 },
-  { name: 'Community', count: 5 },
-  { name: 'CSS', count: 6 },
-  { name: 'Design', count: 6 },
-  { name: 'Framework', count: 2 },
-  { name: 'HTML', count: 2 },
-  { name: 'JavaScript', count: 3 },
-  { name: 'Learning', count: 6 },
-  { name: 'Reference', count: 4 },
+  { name: "AI", count: 1 },
+  { name: "Community", count: 5 },
+  { name: "CSS", count: 6 },
+  { name: "Design", count: 6 },
+  { name: "Framework", count: 2 },
+  { name: "HTML", count: 2 },
+  { name: "JavaScript", count: 3 },
+  { name: "Learning", count: 6 },
+  { name: "Reference", count: 4 },
 ];
 
+// --------------------
 // Main Layout
-function MainLayout({ 
-  bookmarks, sortedBookmarks, selectedTags, setSelectedTags, 
-  tags, setTags, viewMode, setViewMode,
-  searchTerm, setSearchTerm, 
-  isModalOpen, setIsModalOpen, 
-  isSidebarOpen, setIsSidebarOpen, 
-  isDarkMode, toggleTheme, 
-  onAddBookmark, onEdit, onPin, onArchive, onUnarchive, onDelete,
-  isLoggedIn, setIsLoggedIn, 
-  editingBookmark, setEditingBookmark, isEditModalOpen, setIsEditModalOpen,
-  confirmAction, setConfirmAction, confirmActionHandler,
-  currentUser, setCurrentUser, onLogout
+// --------------------
+function MainLayout({
+  bookmarks,
+  setBookmarks,
+  sortedBookmarks,
+  selectedTags,
+  setSelectedTags,
+  tags,
+  setTags,
+  viewMode,
+  setViewMode,
+  searchTerm,
+  setSearchTerm,
+  isModalOpen,
+  setIsModalOpen,
+  isSidebarOpen,
+  setIsSidebarOpen,
+  isDarkMode,
+  toggleTheme,
+  onAddBookmark,
+  onEdit,
+  onPin,
+  onArchive,
+  onUnarchive,
+  onDelete,
+  isLoggedIn,
+  setIsLoggedIn,
+  editingBookmark,
+  setEditingBookmark,
+  isEditModalOpen,
+  setIsEditModalOpen,
+  confirmAction,
+  setConfirmAction,
+  confirmActionHandler,
+  currentUser,
+  setCurrentUser,
+  onLogout,
 }) {
   return (
     <>
+      {/* Sidebar */}
       <Sidebar
         tags={tags}
         selectedTags={selectedTags}
         onTagChange={(tagName) =>
-          setSelectedTags(prev =>
+          setSelectedTags((prev) =>
             prev.includes(tagName)
-              ? prev.filter(t => t !== tagName)
+              ? prev.filter((t) => t !== tagName)
               : [...prev, tagName]
           )
         }
@@ -91,6 +121,7 @@ function MainLayout({
         setViewMode={setViewMode}
       />
 
+      {/* Main Content */}
       <div className="main-content-area">
         <Nav
           searchTerm={searchTerm}
@@ -117,20 +148,42 @@ function MainLayout({
         />
       </div>
 
-      {/* Modals */}
+      {/* Add Bookmark Modal */}
       <AddBookmarkModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onAddBookmark={onAddBookmark}
+        onAddBookmark={(bookmark) => {
+          onAddBookmark(bookmark);
+
+          // 🔁 ট্যাগ আপডেট Sidebar এর জন্য
+          const newTags = bookmark.tags.filter(
+            (t) => !tags.some((tag) => tag.name === t)
+          );
+          if (newTags.length > 0) {
+            const updated = [
+              ...tags,
+              ...newTags.map((t) => ({ name: t, count: 1 })),
+            ];
+            setTags(updated);
+          }
+        }}
         tags={tags}
       />
 
+      {/* Edit Bookmark Modal */}
       <EditBookmarkModal
         isOpen={isEditModalOpen}
-        onClose={() => { setIsEditModalOpen(false); setEditingBookmark(null); }}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingBookmark(null);
+        }}
         bookmark={editingBookmark}
         onSave={(updatedBookmark) => {
-          setBookmarks(prev => prev.map(b => b.id === updatedBookmark.id ? updatedBookmark : b));
+          setBookmarks((prev) =>
+            prev.map((b) =>
+              b.id === updatedBookmark.id ? updatedBookmark : b
+            )
+          );
           setIsEditModalOpen(false);
           setEditingBookmark(null);
         }}
@@ -139,28 +192,53 @@ function MainLayout({
       {/* Confirm Modal */}
       {confirmAction && (
         <div className="modal-overlay" onClick={() => setConfirmAction(null)}>
-          <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="confirm-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h3>
-                {confirmAction.type === 'delete' ? 'Delete' : 
-                 confirmAction.type === 'archive' ? 'Archive' : 'Unarchive'} bookmark
+                {confirmAction.type === "delete"
+                  ? "Delete"
+                  : confirmAction.type === "archive"
+                  ? "Archive"
+                  : "Unarchive"}{" "}
+                bookmark
               </h3>
-              <button onClick={() => setConfirmAction(null)} className="modal-close-btn">X</button>
+              <button
+                onClick={() => setConfirmAction(null)}
+                className="modal-close-btn"
+              >
+                ×
+              </button>
             </div>
             <p>
-              {confirmAction.type === 'delete' 
-                ? 'This action cannot be undone. Are you sure you want to permanently delete this bookmark?'
-                : `Are you sure you want to ${confirmAction.type === 'archive' ? 'archive' : 'unarchive'} this bookmark?`
-              }
+              {confirmAction.type === "delete"
+                ? "This action cannot be undone. Are you sure you want to permanently delete this bookmark?"
+                : `Are you sure you want to ${
+                    confirmAction.type === "archive" ? "archive" : "unarchive"
+                  } this bookmark?`}
             </p>
             <div className="modal-actions">
-              <button onClick={() => setConfirmAction(null)} className="cancel-btn">Cancel</button>
-              <button 
-                onClick={confirmActionHandler} 
-                className={confirmAction.type === 'delete' ? 'delete-confirm-btn' : 'archive-confirm-btn'}
+              <button
+                onClick={() => setConfirmAction(null)}
+                className="cancel-btn"
               >
-                {confirmAction.type === 'delete' ? 'Delete' : 
-                 confirmAction.type === 'archive' ? 'Archive' : 'Unarchive'}
+                Cancel
+              </button>
+              <button
+                onClick={confirmActionHandler}
+                className={
+                  confirmAction.type === "delete"
+                    ? "delete-confirm-btn"
+                    : "archive-confirm-btn"
+                }
+              >
+                {confirmAction.type === "delete"
+                  ? "Delete"
+                  : confirmAction.type === "archive"
+                  ? "Archive"
+                  : "Unarchive"}
               </button>
             </div>
           </div>
@@ -170,42 +248,50 @@ function MainLayout({
   );
 }
 
+// --------------------
+// Main App Content
+// --------------------
 function AppContent() {
   const location = useLocation();
 
   const [bookmarks, setBookmarks] = useState(initialBookmarks);
   const [selectedTags, setSelectedTags] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [tags, setTags] = useState(initialTags);
   const [editingBookmark, setEditingBookmark] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState('all');
+  const [viewMode, setViewMode] = useState("all");
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null); // যোগ করা হয়েছে
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // রিফ্রেশে ইউজার লোড
+  // Reload user on refresh
   useEffect(() => {
-    const user = localStorage.getItem('currentUser');
-    console.log('App.jsx: currentUser loaded:', user ? JSON.parse(user) : null);
+    const user = localStorage.getItem("currentUser");
     if (user) {
-      const parsed = JSON.parse(user);
-      setCurrentUser(parsed);
+      setCurrentUser(JSON.parse(user));
       setIsLoggedIn(true);
     }
   }, []);
 
-  const toggleTheme = () => setIsDarkMode(prev => !prev);
+  const toggleTheme = () => setIsDarkMode((prev) => !prev);
 
   const filteredBookmarks = bookmarks.filter((bookmark) => {
-    const matchesSearch = bookmark.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => bookmark.tags.includes(tag));
-    const matchesView = 
-      viewMode === 'all' ? !bookmark.archived : 
-      viewMode === 'archived' ? bookmark.archived : true;
+    const matchesSearch = bookmark.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesTags =
+      selectedTags.length === 0 ||
+      selectedTags.some((tag) => bookmark.tags.includes(tag));
+    const matchesView =
+      viewMode === "all"
+        ? !bookmark.archived
+        : viewMode === "archived"
+        ? bookmark.archived
+        : true;
     return matchesSearch && matchesTags && matchesView;
   });
 
@@ -216,8 +302,14 @@ function AppContent() {
   });
 
   const handleAddBookmark = (newBookmark) => {
-    const bookmarkWithTime = { ...newBookmark, pinned: false, archived: false, addTime: Date.now() };
-    setBookmarks(prev => [...prev, bookmarkWithTime]);
+    const bookmarkWithTime = {
+      ...newBookmark,
+      id: Date.now(),
+      pinned: false,
+      archived: false,
+      addTime: Date.now(),
+    };
+    setBookmarks((prev) => [...prev, bookmarkWithTime]);
   };
 
   const handleEdit = (bookmark) => {
@@ -226,39 +318,50 @@ function AppContent() {
   };
 
   const handlePin = (id) => {
-    setBookmarks(prev =>
-      prev.map(b => b.id === id ? { ...b, pinned: !b.pinned } : b)
+    setBookmarks((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, pinned: !b.pinned } : b))
     );
   };
 
-  const handleArchive = (id) => setConfirmAction({ type: 'archive', id });
-  const handleUnarchive = (id) => setConfirmAction({ type: 'unarchive', id });
-  const handleDelete = (id) => setConfirmAction({ type: 'delete', id });
+  const handleArchive = (id) => setConfirmAction({ type: "archive", id });
+  const handleUnarchive = (id) => setConfirmAction({ type: "unarchive", id });
+  const handleDelete = (id) => setConfirmAction({ type: "delete", id });
 
   const confirmActionHandler = () => {
     if (!confirmAction) return;
-    if (confirmAction.type === 'archive')
-      setBookmarks(prev => prev.map(b => b.id === confirmAction.id ? { ...b, archived: true } : b));
-    else if (confirmAction.type === 'unarchive')
-      setBookmarks(prev => prev.map(b => b.id === confirmAction.id ? { ...b, archived: false } : b));
-    else if (confirmAction.type === 'delete')
-      setBookmarks(prev => prev.filter(b => b.id !== confirmAction.id));
+    setBookmarks((prev) => {
+      if (confirmAction.type === "archive")
+        return prev.map((b) =>
+          b.id === confirmAction.id ? { ...b, archived: true } : b
+        );
+      if (confirmAction.type === "unarchive")
+        return prev.map((b) =>
+          b.id === confirmAction.id ? { ...b, archived: false } : b
+        );
+      if (confirmAction.type === "delete")
+        return prev.filter((b) => b.id !== confirmAction.id);
+      return prev;
+    });
     setConfirmAction(null);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem("currentUser");
     setCurrentUser(null);
     setIsLoggedIn(false);
   };
 
-  const hideLayout = location.pathname === '/login' || location.pathname === '/signup';
+  const hideLayout =
+    location.pathname === "/login" || location.pathname === "/signup";
 
   return (
-    <div className={`bookmark-manager-app ${isDarkMode ? 'dark-mode' : ''}`}>
+    <div
+      className={`bookmark-manager-app ${isDarkMode ? "dark-mode" : ""}`}
+    >
       {!hideLayout ? (
         <MainLayout
           bookmarks={bookmarks}
+          setBookmarks={setBookmarks}
           sortedBookmarks={sortedBookmarks}
           selectedTags={selectedTags}
           setSelectedTags={setSelectedTags}
@@ -295,14 +398,33 @@ function AppContent() {
         />
       ) : (
         <Routes>
-          <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setCurrentUser={setCurrentUser} />} />
-          <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} setCurrentUser={setCurrentUser} />} />
+          <Route
+            path="/login"
+            element={
+              <Login
+                setIsLoggedIn={setIsLoggedIn}
+                setCurrentUser={setCurrentUser}
+              />
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <Signup
+                setIsLoggedIn={setIsLoggedIn}
+                setCurrentUser={setCurrentUser}
+              />
+            }
+          />
         </Routes>
       )}
     </div>
   );
 }
 
+// --------------------
+// Router Wrapper
+// --------------------
 function App() {
   return (
     <Router>
