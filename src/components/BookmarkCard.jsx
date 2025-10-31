@@ -1,5 +1,5 @@
 // src/components/BookmarkCard.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   MoreVertical, Eye, Clock, Calendar, Pin, Globe, PinOff,
   ExternalLink, Copy, Edit3, Archive, Trash2
@@ -13,37 +13,60 @@ function BookmarkCard({
   onVisit, onCopy, onPin, onEdit, onArchive, onUnarchive, onDelete,
   isArchivedView
 }) {
-  const views = 47;
-  const lastVisited = "23 Sep";
-  const dateAdded = "15 Jan";
-
   const pinButtonText = bookmark.pinned ? 'Unpin' : 'Pin';
   const PinIcon = bookmark.pinned ? PinOff : Pin;
+
+  const [showCopied, setShowCopied] = useState(false);
+  const [faviconError, setFaviconError] = useState(false);
+
+  // রিসেট favicon error when bookmark changes
+  useEffect(() => {
+    setFaviconError(false);
+  }, [bookmark.id, bookmark.favicon]);
+
+  const handleCopyUrl = (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(bookmark.url);
+    setShowCopied(true);
+    setTimeout(() => setShowCopied(false), 1500);
+  };
+
+  // ফেভিকন শুধু তখনই দেখাবে যদি URL সঠিক হয়
+  const shouldShowFavicon = bookmark.favicon && !faviconError;
 
   return (
     <div className="bookmark-card">
       <div className="card-header">
         <div className="card-title-group">
-          {bookmark.favicon ? (
+          {/* ফেভিকন: শুধু সঠিক হলে */}
+          {shouldShowFavicon && (
             <img 
               src={bookmark.favicon} 
               alt={`${bookmark.title} favicon`}
               className="site-icon favicon"
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextElementSibling.style.display = 'block';
-              }}
+              onError={() => setFaviconError(true)}
             />
-          ) : null}
+          )}
+
+          {/* ডিফল্ট Globe আইকন */}
           <Globe 
             size={16} 
             className="site-icon" 
-            style={{ display: bookmark.favicon ? 'none' : 'block' }} 
+            style={{ display: shouldShowFavicon ? 'none' : 'block' }} 
           />
 
-          <div>
+          <div style={{ position: 'relative' }}>
             <h3 className="card-title">{bookmark.title}</h3>
-            <p className="card-url">{bookmark.url}</p>
+            <p 
+              className="card-url clickable-url" 
+              onClick={handleCopyUrl}
+              title="Click to copy URL"
+            >
+              {bookmark.url}
+            </p>
+            {showCopied && (
+              <div className="copy-tooltip">Copied!</div>
+            )}
           </div>
         </div>
 
@@ -54,35 +77,55 @@ function BookmarkCard({
 
           {isMenuOpen && (
             <div className="dropdown-menu">
-              <button onClick={() => onVisit(bookmark)}>
+              {/* Visit */}
+              <button onClick={() => {
+                onVisit(bookmark);
+                onToggleMenu();
+                const finalUrl = /^https?:\/\//i.test(bookmark.url) ? bookmark.url : `https://${bookmark.url}`;
+                window.open(finalUrl, '_blank', 'noopener,noreferrer');
+              }}>
                 <ExternalLink size={16} /> Visit
               </button>
-              <button onClick={() => onCopy(bookmark.url)}>
+
+              {/* Copy URL */}
+              <button onClick={() => {
+                onCopy(bookmark.url);
+                onToggleMenu();
+              }}>
                 <Copy size={16} /> Copy URL
               </button>
 
-              <button onClick={() => onPin(bookmark.id)}>
-                <PinIcon size={16} /> {pinButtonText}
-              </button>
+              {/* Pin/Unpin: শুধু Home পেজে */}
+              {!isArchivedView && (
+                <button onClick={() => {
+                  onPin(bookmark.id);
+                  onToggleMenu();
+                }}>
+                  <PinIcon size={16} /> {pinButtonText}
+                </button>
+              )}
 
-              {/* Archive / Unarchive */}
-              <button 
-                onClick={() => 
-                  bookmark.archived 
-                    ? onUnarchive(bookmark.id) 
-                    : onArchive(bookmark.id)
-                }
-              >
+              {/* Archive/Unarchive */}
+              <button onClick={() => {
+                bookmark.archived ? onUnarchive(bookmark.id) : onArchive(bookmark.id);
+                onToggleMenu();
+              }}>
                 <Archive size={16} /> {bookmark.archived ? 'Unarchive' : 'Archive'}
               </button>
 
-              {/* Edit বা Delete */}
+              {/* Edit or Delete */}
               {isArchivedView ? (
-                <button onClick={() => onDelete(bookmark.id)} className="delete-menu-btn">
+                <button onClick={() => {
+                  onDelete(bookmark.id);
+                  onToggleMenu();
+                }} className="delete-menu-btn">
                   <Trash2 size={16} /> Delete
                 </button>
               ) : (
-                <button onClick={() => onEdit(bookmark)}>
+                <button onClick={() => {
+                  onEdit(bookmark);
+                  onToggleMenu();
+                }}>
                   <Edit3 size={16} /> Edit
                 </button>
               )}
@@ -100,33 +143,55 @@ function BookmarkCard({
         </div>
       </div>
 
+      {/* CARD FOOTER */}
       <div className="card-footer">
         <div className="card-info">
-          <Eye size={14} /><span>{views}</span>
+          <div 
+            style={{ 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '4px',
+              color: '#3b82f6'
+            }}
+            onClick={() => onVisit(bookmark)}
+            title="Click to count as a view (once every 3 days)"
+          >
+            <Eye size={14} />
+            <span>{bookmark.views || 0}</span>
+          </div>
+
           <span> • </span>
-          <Clock size={14} /><span>{lastVisited}</span>
+          <Clock size={14} /><span>{bookmark.lastVisited || 'Never'}</span>
           <span> • </span>
-          <Calendar size={14} /><span>{dateAdded}</span>
+          <Calendar size={14} /><span>{bookmark.dateAdded || 'Unknown'}</span>
         </div>
 
-        {/* এখানে condition */}
-        <div 
-          className="pin" 
-          onClick={() => !isArchivedView && onPin(bookmark.id)}
-          style={{ cursor: isArchivedView ? 'default' : 'pointer' }}
-        >
-          {isArchivedView ? (
-            <span className="archived-text" style={{ color: 'gray', fontWeight: '500' }}>
-              Archived
-            </span>
-          ) : (
+        {/* Pin আইকন বা Archived লেখা */}
+        {isArchivedView ? (
+          <span 
+            style={{ 
+              color: '#6b7280', 
+              fontWeight: '500', 
+              fontSize: '0.875rem' 
+            }}
+          >
+            Archived
+          </span>
+        ) : bookmark.pinned ? (
+          <div 
+            className="pin" 
+            style={{ cursor: 'pointer' }}
+            title="Unpin"
+          >
             <Pin 
-              size={28} 
-              color={bookmark.pinned ? 'red' : 'gray'} 
-              fill={bookmark.pinned ? 'red' : 'none'} 
+              size={28}  
+              color="#ef4444"
+              fill="#ef4444"
+              strokeWidth={2.5}
             />
-          )}
-        </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

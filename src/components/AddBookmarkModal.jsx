@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 
-function AddBookmarkModal({ isOpen, onClose, onAddBookmark, tags }) {
+function AddBookmarkModal({ isOpen, onClose, onAddBookmark }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [url, setUrl] = useState('');
@@ -13,31 +13,41 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark, tags }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // URL সঠিক করুন
     const finalUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
-    const domain = new URL(finalUrl).hostname;
-    const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+    let faviconUrl = null;
+
+    // ফেভিকন শুধু বৈধ ডোমেইনে, localhost বাদ
+    try {
+      const domain = new URL(finalUrl).hostname;
+      if (!['localhost', '127.0.0.1'].includes(domain)) {
+        faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+      }
+    } catch (error) {
+      // ইউআরএল ভ্যালিড না হলে কিছু করবেন না
+      console.warn('Invalid URL for favicon:', finalUrl);
+    }
 
     const newBookmark = {
       id: Date.now(),
       title: title.trim(),
       description: description.trim(),
       url: finalUrl,
-      favicon: faviconUrl,
+      favicon: faviconUrl, // null হলে Globe দেখাবে
       tags: tagsInput
         .split(',')
         .map(tag => tag.trim())
         .filter(tag => tag.length > 0),
-      pinned: false,        // ডিফল্ট: আনপিন
-      addTime: Date.now(),  // অর্ডারিংয়ের জন্য
+      pinned: false,
+      archived: false,
+      addTime: Date.now(),
+      views: 0,
+      lastVisitTime: 0,
+      lastVisited: 'Never',
+      dateAdded: new Date().toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short'
+      }) // e.g., "31 Oct"
     };
-
-    // ট্যাগ আপডেট (যদি নতুন ট্যাগ থাকে)
-    const newTags = newBookmark.tags.filter(tag => !tags.some(t => t.name === tag));
-    if (newTags.length > 0 && tags) {
-      // ট্যাগ কাউন্ট আপডেট করুন (App.jsx এর মতো)
-      // এখানে সিম্পলি পাস করা হলো, App.jsx এ হ্যান্ডেল হবে
-    }
 
     onAddBookmark(newBookmark);
 
@@ -75,7 +85,7 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark, tags }) {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder=""
+              placeholder="e.g. React Docs"
               required
             />
           </div>
@@ -88,7 +98,7 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark, tags }) {
               onChange={(e) => setDescription(e.target.value)}
               maxLength={400}
               rows={3}
-              placeholder=""
+              placeholder="Brief description..."
               required
             />
             <small className="char-count">{description.length}/400</small>
@@ -101,7 +111,7 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark, tags }) {
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder=""
+              placeholder="react.dev"
               required
             />
           </div>
@@ -113,7 +123,7 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark, tags }) {
               type="text"
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
-              placeholder=""
+              placeholder="react, frontend, docs"
             />
             <small style={{ color: '#666', fontSize: '0.75rem' }}>
               Separate tags with commas
