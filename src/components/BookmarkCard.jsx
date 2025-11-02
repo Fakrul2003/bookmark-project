@@ -151,8 +151,7 @@ function BookmarkCard({
               cursor: 'pointer', 
               display: 'flex', 
               alignItems: 'center', 
-              gap: '4px',
-              color: '#3b82f6'
+              gap: '4px'
             }}
             onClick={() => onVisit(bookmark)}
             title="Click to count as a view (once every 3 days)"
@@ -161,9 +160,8 @@ function BookmarkCard({
             <span>{bookmark.views || 0}</span>
           </div>
 
-          <span> • </span>
+          
           <Clock size={14} /><span>{bookmark.lastVisited || 'Never'}</span>
-          <span> • </span>
           <Calendar size={14} /><span>{bookmark.dateAdded || 'Unknown'}</span>
         </div>
 
