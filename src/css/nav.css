@@ -395,6 +395,10 @@
 .theme-toggle-switch:hover .switch.dark {
   background: #4b5563;
 }
+.profile-avatar-img{
+  width: 20px;
+  height: 20px;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
