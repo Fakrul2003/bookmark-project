@@ -81,41 +81,6 @@
   margin-left: 10px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .menu-toggle-btn {
-    display: block; /* ছোট স্ক্রিনে (মোবাইল) দেখাবে */
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  .nav-search {
-    width: 150px; /* ছোট স্ক্রিনে সার্চ বারের প্রস্থ কমানো */
-    padding: 6px 10px;
-    margin-left: 59px;
-  }
-
-  .nav-search input {
-    font-size: 0.9rem;
-  }
-
-  .add-bookmark-btn {
-    padding: 6px 12px; /* ছোট স্ক্রিনে বাটনের সাইজ কমানো */
-    font-size: 0.9rem;
-  }
-
- 
-}
-
-@media (min-width: 769px) {
-  .menu-toggle-btn {
-    display: none; /* বড় স্ক্রিনে (ডেস্কটপ) লুকানো */
-  }
-}
-
-
-
 /* ========== */
 /* থিম টগল আইটেম */
 .theme-toggle-item {
@@ -431,3 +396,47 @@
   background: #4b5563;
 }
 
+/* Responsive Design */
+@media (max-width: 768px) {
+  .menu-toggle-btn {
+    display: block; /* ছোট স্ক্রিনে (মোবাইল) দেখাবে */
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .nav-search {
+    width: 150px; /* ছোট স্ক্রিনে সার্চ বারের প্রস্থ কমানো */
+    padding: 0px 5px;
+    margin-left: 59px;
+  }
+
+  .nav-search input {
+    font-size: 0.9rem;
+  }
+
+  .add-bookmark-btn {
+  /* ছোট স্ক্রিনে বাটনের সাইজ কমানো */
+    width: 100px;
+  }
+
+ .user-profile-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s;
+
+}
+
+.user-profile-btn:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+}
+
+@media (min-width: 769px) {
+  .menu-toggle-btn {
+    display: none; /* বড় স্ক্রিনে (ডেস্কটপ) লুকানো */
+  }
+}
