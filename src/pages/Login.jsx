@@ -8,14 +8,20 @@ function Login({ setIsLoggedIn, setCurrentUser }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const savedUser = JSON.parse(localStorage.getItem('user'));
-    if (savedUser && savedUser.email === form.email && savedUser.password === form.password) {
-      localStorage.setItem('currentUser', JSON.stringify(savedUser));
-      setCurrentUser(savedUser);
+
+    const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+    const matchedUser = allUsers.find(
+      (user) => user.email === form.email.trim() && user.password === form.password
+    );
+
+    if (matchedUser) {
+      localStorage.setItem('currentUser', JSON.stringify(matchedUser));
+      setCurrentUser(matchedUser);
       setIsLoggedIn(true);
+      alert(`Welcome back, ${matchedUser.name}!`);
       navigate('/');
     } else {
-      alert('Invalid credentials!');
+      alert('Invalid email or password!');
     }
   };
 

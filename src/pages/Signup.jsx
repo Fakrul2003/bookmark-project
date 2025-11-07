@@ -7,6 +7,7 @@ function Signup({ setIsLoggedIn, setCurrentUser }) {
   const [form, setForm] = useState({ name: '', email: '', password: '', profileImage: '' });
   const [imagePreview, setImagePreview] = useState(null);
 
+  // 🖼️ ইউজার ইমেজ আপলোড হ্যান্ডলিং
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -19,6 +20,7 @@ function Signup({ setIsLoggedIn, setCurrentUser }) {
     }
   };
 
+  // 🧩 ফর্ম সাবমিট হ্যান্ডলার
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.password) {
@@ -26,17 +28,26 @@ function Signup({ setIsLoggedIn, setCurrentUser }) {
       return;
     }
 
+    // নতুন ইউজার ডাটা তৈরি
     const userData = {
-      name: form.name,
-      email: form.email,
+      name: form.name.trim(),
+      email: form.email.trim(),
       password: form.password,
-      profileImage: form.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(form.name)}&background=0d9488&color=fff&size=100`
+      profileImage:
+        form.profileImage ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(form.name)}&background=0d9488&color=fff&size=100`,
     };
 
-    localStorage.setItem('user', JSON.stringify(userData));
+    // ✅ সব ইউজারদের অ্যারে হিসেবে সংরক্ষণ (মাল্টিপল ইউজার সাপোর্ট)
+    const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+    allUsers.push(userData);
+    localStorage.setItem('users', JSON.stringify(allUsers));
+
+    // কারেন্ট ইউজার সেট করা
     localStorage.setItem('currentUser', JSON.stringify(userData));
     setCurrentUser(userData);
     setIsLoggedIn(true);
+
     alert('Account created successfully!');
     navigate('/');
   };

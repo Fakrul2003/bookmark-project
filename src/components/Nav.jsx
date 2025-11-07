@@ -29,6 +29,13 @@ function Nav({
     navigate(path);
   };
 
+  // ✅ Safe fallback image (works even if user has no image)
+  const profileImage = currentUser?.profileImage
+    ? currentUser.profileImage
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        currentUser?.name || "User"
+      )}&background=0d9488&color=fff&size=100`;
+
   return (
     <header className="nav-bar">
       <button className="menu-toggle-btn" onClick={toggleSidebar}>
@@ -57,11 +64,13 @@ function Nav({
           >
             {currentUser ? (
               <img 
-                src={currentUser.profileImage} 
+                src={profileImage} 
                 alt={currentUser.name || 'User'}
                 className="profile-avatar-img"
                 onError={(e) => {
-                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || 'User')}&background=0d9488&color=fff&size=100`;
+                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                    currentUser.name || 'User'
+                  )}&background=0d9488&color=fff&size=100`;
                 }}
               />
             ) : (
@@ -73,11 +82,15 @@ function Nav({
             <div className="profile-dropdown">
               <div className="profile-header">
                 <div className="profile-avatar">
-                  {currentUser?.profileImage ? (
-                    <img src={currentUser.profileImage} alt={currentUser.name} />
-                  ) : (
-                    <User size={40} />
-                  )}
+                  <img
+                    src={profileImage}
+                    alt={currentUser?.name || 'User'}
+                    onError={(e) => {
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        currentUser?.name || 'User'
+                      )}&background=0d9488&color=fff&size=100`;
+                    }}
+                  />
                 </div>
                 <div>
                   {currentUser ? (

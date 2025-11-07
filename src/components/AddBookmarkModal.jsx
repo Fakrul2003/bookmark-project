@@ -85,7 +85,6 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark }) {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. React Docs"
               required
             />
           </div>
@@ -98,7 +97,6 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark }) {
               onChange={(e) => setDescription(e.target.value)}
               maxLength={400}
               rows={3}
-              placeholder="Brief description..."
               required
             />
             <small className="char-count">{description.length}/400</small>
@@ -111,7 +109,6 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark }) {
               type="text"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="react.dev"
               required
             />
           </div>
@@ -123,7 +120,6 @@ function AddBookmarkModal({ isOpen, onClose, onAddBookmark }) {
               type="text"
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
-              placeholder="react, frontend, docs"
             />
             <small style={{ color: '#666', fontSize: '0.75rem' }}>
               Separate tags with commas
